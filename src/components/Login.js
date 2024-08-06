@@ -21,11 +21,11 @@ const Login = () => {
   return (
     <div className="relative h-screen flex items-center justify-center bg-black">
       <Header />
-      <img
+      {/* <img
         src="https://assets.nflxext.com/ffe/siteui/vlv3/826348c2-cdcb-42a0-bc11-a788478ba5a2/6d20b198-e7ab-4e9f-a1aa-666faa0298f9/IN-en-20240729-POP_SIGNUP_TWO_WEEKS-perspective_WEB_a67d8c9e-8121-4a74-98e4-8005eb2df227_large.jpg"
         alt="background"
         className="absolute inset-0 object-cover w-full h-full opacity-60"
-      />
+      /> */}
       <div className="relative z-10 bg-black bg-opacity-70 p-16 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-bold text-white mb-8">
           {isSignInForm ? "Sign In" : "Sign Up"}
