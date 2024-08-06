@@ -1,15 +1,53 @@
 import React, { useState } from "react";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { auth, db } from "./firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { toast, ToastContainer } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import 'react-toastify/dist/ReactToastify.css'; // Ensure this import is present
 
-const Login = () => {
+export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [isSignInForm, setIsSignInForm] = useState(true);
+  const navigate = useNavigate(); // useNavigate for navigation
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle form submission (e.g., send data to a server)
-    console.log("Email:", email);
-    console.log("Password:", password);
+    try {
+      if (isSignInForm) {
+        // Sign In Logic
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("User signed in:", user);
+        toast.success('User signed in successfully!', { position: "top-center" });
+        navigate('/browse'); // Use navigate for redirection
+      } else {
+        // Sign Up Logic
+        if (!email || !password || !firstName || !lastName) {
+          toast.error('All fields are required.', { position: "bottom-center" });
+          return;
+        }
+
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("User created:", user);
+
+        // Set additional user data in Firestore
+        await setDoc(doc(db, "users", user.uid), {
+          email: user.email,
+          firstName: firstName,
+          lastName: lastName
+        });
+        toast.success('Account created successfully!', { position: "top-center" });
+        navigate('/browse'); // Use navigate for redirection
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error.message, { position: "bottom-center" });
+    }
   };
 
   const toggleForm = () => {
@@ -28,12 +66,18 @@ const Login = () => {
               <input
                 type="text"
                 placeholder="First Name"
+                value={firstName}
+                onChange={(e) => setFirstName(e.target.value)}
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+                required
               />
               <input
                 type="text"
                 placeholder="Last Name"
+                value={lastName}
+                onChange={(e) => setLastName(e.target.value)}
                 className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+                required
               />
             </>
           )}
@@ -43,6 +87,7 @@ const Login = () => {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+            required
           />
           <input
             type="password"
@@ -50,6 +95,7 @@ const Login = () => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             className="w-full p-2 bg-gray-700 border border-gray-600 rounded"
+            required
           />
           <button
             type="submit"
@@ -65,8 +111,7 @@ const Login = () => {
           </button>
         </p>
       </div>
+     
     </div>
   );
 };
-
-export default Login;
