@@ -10,7 +10,10 @@ const Login = () => {
 
   const handleButtonClick = (e) => {
     e.preventDefault();
-    const validationError = checkValidData(email.current.value, password.current.value);
+    const validationError = checkValidData(
+      email.current.value,
+      password.current.value
+    );
     setErrorMessage(validationError);
   };
 
@@ -21,11 +24,11 @@ const Login = () => {
   return (
     <div className="relative h-screen flex items-center justify-center bg-black">
       <Header />
-      {/* <img
+      <img
         src="https://assets.nflxext.com/ffe/siteui/vlv3/826348c2-cdcb-42a0-bc11-a788478ba5a2/6d20b198-e7ab-4e9f-a1aa-666faa0298f9/IN-en-20240729-POP_SIGNUP_TWO_WEEKS-perspective_WEB_a67d8c9e-8121-4a74-98e4-8005eb2df227_large.jpg"
         alt="background"
         className="absolute inset-0 object-cover w-full h-full opacity-60"
-      /> */}
+      />
       <div className="relative z-10 bg-black bg-opacity-70 p-16 rounded-lg shadow-lg w-full max-w-md">
         <h1 className="text-3xl font-bold text-white mb-8">
           {isSignInForm ? "Sign In" : "Sign Up"}
@@ -54,20 +57,6 @@ const Login = () => {
             />
             {errorMessage === "Email is not valid" && (
               <p className="absolute top-full left-0 mt-2 p-2 bg-red-600 text-white text-sm rounded-lg shadow-md transition-opacity duration-300 opacity-100">
-                <svg
-                  className="w-5 h-5 inline-block mr-2 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
                 <span>Email is not valid</span>
               </p>
             )}
@@ -81,20 +70,6 @@ const Login = () => {
             />
             {errorMessage === "Password is not valid" && (
               <p className="absolute top-full left-0 mt-2 p-2 bg-red-600 text-white text-sm rounded-lg shadow-md transition-opacity duration-300 opacity-100">
-                <svg
-                  className="w-5 h-5 inline-block mr-2 text-white"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                  ></path>
-                </svg>
                 <span>Password is not valid</span>
               </p>
             )}
@@ -129,31 +104,6 @@ const Login = () => {
 };
 
 export default Login;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* import React from "react";
 import Header from "./Header";
