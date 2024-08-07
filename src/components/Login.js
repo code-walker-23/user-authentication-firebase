@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { setDoc, doc } from "firebase/firestore";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { useNavigate } from "react-router-dom";
 import 'react-toastify/dist/ReactToastify.css'; // Ensure this import is present
 
@@ -14,42 +14,63 @@ export const Login = () => {
   const [isSignInForm, setIsSignInForm] = useState(true);
   const navigate = useNavigate(); // useNavigate for navigation
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      if (isSignInForm) {
-        // Sign In Logic
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log("User signed in:", user);
-        toast.success('User signed in successfully!', { position: "top-center" });
-        navigate('/browse'); // Use navigate for redirection
-      } else {
-        // Sign Up Logic
-        if (!email || !password || !firstName || !lastName) {
-          toast.error('All fields are required.', { position: "bottom-center" });
-          return;
-        }
-
-        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log("User created:", user);
-
-        // Set additional user data in Firestore
-        await setDoc(doc(db, "users", user.uid), {
-          email: user.email,
-          firstName: firstName,
-          lastName: lastName
-        });
-        toast.success('Account created successfully!', { position: "top-center" });
-        navigate('/browse'); // Use navigate for redirection
-      }
-    } catch (error) {
-      console.error("Error:", error);
-      toast.error(error.message, { position: "bottom-center" });
+    if (isSignInForm) {
+      await handleSignIn();
+    } else {
+      await handleSignUp();
     }
   };
 
+  // Sign In Logic
+  const handleSignIn = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("User signed in:", user);
+      toast.success('User signed in successfully!', { position: "top-center" });
+      navigate('/browse'); // Redirect to browse page
+    } catch (error) {
+      console.error("Sign In Error:", error);
+      toast.error('Failed to sign in. Please check your credentials.', { position: "bottom-center" });
+    }
+  };
+
+  // Sign Up Logic
+  const handleSignUp = async () => {
+    if (!email || !password || !firstName || !lastName) {
+      toast.error('All fields are required.', { position: "bottom-center" });
+      return;
+    }
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+      console.log("User created:", user);
+
+      // Set additional user data in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        email: user.email,
+        firstName: firstName,
+        lastName: lastName
+      });
+
+      toast.success('Account created successfully! Please sign in.', { position: "top-center" });
+
+      // // Redirect to sign-in page after a brief delay
+      // setTimeout(() => {
+      //   navigate('/signin');
+      // }, 3000); // Adjust the delay as needed
+
+    } catch (error) {
+      console.error("Sign Up Error:", error);
+      toast.error('Failed to create account. Please try again later.', { position: "bottom-center" });
+    }
+  };
+
+  // Toggle between sign-in and sign-up forms
   const toggleForm = () => {
     setIsSignInForm(!isSignInForm);
   };
@@ -111,7 +132,6 @@ export const Login = () => {
           </button>
         </p>
       </div>
-     
     </div>
   );
 };
